@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevPortfolio | Web Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .code-text {
+            font-family: 'Courier New', monospace;
+        }
+        .glow-text {
+            text-shadow: 0 0 8px rgba(100, 255, 218, 0.8);
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #64ffda, #00b4d8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(100, 255, 218, 0.3);
+        }
+        .skill-bar {
+            height: 4px;
+            background: rgba(100, 255, 218, 0.2);
+        }
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #64ffda, #00b4d8);
+        }
+        #terminal {
+            font-family: 'Courier New', monospace;
+            height: 300px;
+            overflow-y: auto;
+            background-color: rgba(13, 17, 23, 0.8);
+            border: 1px solid #64ffda;
+        }
+        .terminal-line {
+            margin: 0;
+            padding: 2px 10px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .terminal-prompt {
+            color: #64ffda;
+        }
+        .terminal-command {
+            color: #ffffff;
+        }
+        .terminal-response {
+            color: #00b4d8;
+        }
+        .cube-container {
+            perspective: 1000px;
+            width: 200px;
+            height: 200px;
+        }
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate 15s infinite linear;
+        }
+        .cube-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid #64ffda;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: inset 0 0 20px rgba(100, 255, 218, 0.2);
+        }
+        .cube-face img {
+            max-width: 80%;
+            max-height: 80%;
+        }
+        .cube-face-front { transform: rotateY(0deg) translateZ(100px); }
+        .cube-face-back { transform: rotateY(180deg) translateZ(100px); }
+        .cube-face-right { transform: rotateY(90deg) translateZ(100px); }
+        .cube-face-left { transform: rotateY(-90deg) translateZ(100px); }
+        .cube-face-top { transform: rotateX(90deg) translateZ(100px); }
+        .cube-face-bottom { transform: rotateX(-90deg) translateZ(100px); }
+        
+        @keyframes rotate {
+            from { transform: rotateX(0deg) rotateY(0deg); }
+            to { transform: rotateX(360deg) rotateY(360deg); }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 min-h-screen">
+    <!-- Background Animation -->
+    <div id="vanta-bg" class="fixed inset-0 -z-10"></div>
+    
+    <!-- Navigation -->
+    <nav class="bg-gray-900 bg-opacity-80 backdrop-blur-md fixed w-full z-50 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="text-xl font-bold code-text gradient-text">PETER ABENZA</span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition">Home</a>
+                        <a href="#about" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition">About</a>
+                        <a href="#skills" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition">Skills</a>
+                        <a href="#projects" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition">Projects</a>
+                        <a href="#contact" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition">Contact</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-300 hover:text-white focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-900 bg-opacity-95">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition">Home</a>
+                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition">About</a>
+                <a href="#skills" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition">Skills</a>
+                <a href="#projects" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition">Projects</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row items-center justify-between">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-6xl font-bold mb-4 glow-text">
+                    <span class="gradient-text">Olá, Eu sou</span>
+                    <br>
+                    <span class="text-white">Peter Abenza</span>
+                </h1>
+                <h2 class="text-2xl md:text-3xl font-semibold mb-6 text-gray-300 code-text">
+                    &gt; Full Stack Web Developer
+                </h2>
+                <p class="text-gray-400 mb-8 max-w-lg">
+					Eu crio experiências digitais excepcionais com código limpo e eficiente.
+					Com 3 anos de experiência, sou especializado na criação de aplicações web responsivas e fáceis de usar.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#contact" class="px-6 py-3 bg-gradient-to-r from-teal-400 to-blue-500 text-white font-medium rounded-md hover:opacity-90 transition duration-300">
+                        Entre em Contato
+                    </a>
+                    <a href="#projects" class="px-6 py-3 border border-teal-400 text-teal-400 font-medium rounded-md hover:bg-teal-400 hover:bg-opacity-10 transition duration-300">
+                        Meus Projetos
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <div class="cube-container">
+                    <div class="cube">
+                        <div class="cube-face cube-face-front flex flex-col items-center justify-center">
+                            <i class="fab fa-html5 text-5xl text-orange-500 mb-2"></i>
+                            <span class="text-xs">HTML5</span>
+                        </div>
+                        <div class="cube-face cube-face-back flex flex-col items-center justify-center">
+                            <i class="fab fa-css3-alt text-5xl text-blue-500 mb-2"></i>
+                            <span class="text-xs">CSS3</span>
+                        </div>
+                        <div class="cube-face cube-face-right flex flex-col items-center justify-center">
+                            <i class="fab fa-js text-5xl text-yellow-400 mb-2"></i>
+                            <span class="text-xs">JavaScript</span>
+                        </div>
+                        <div class="cube-face cube-face-left flex flex-col items-center justify-center">
+                            <i class="fab fa-java text-5xl text-blue-400 mb-2"></i>
+                            <span class="text-xs">Java</span>
+                        </div>
+                        <div class="cube-face cube-face-top flex flex-col items-center justify-center">
+							<i class="fas fa-leaf text-4xl text-green-600"></i> 
+                            <span class="text-xs">Spring Boot</span>
+                        </div>
+                        <div class="cube-face cube-face-bottom flex flex-col items-center justify-center">
+                            <i class="fas fa-database text-5xl text-blue-300 mb-2"></i>
+                            <span class="text-xs">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gray-800 bg-opacity-50 rounded-xl backdrop-blur-sm my-10">
+        <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/3 mb-10 md:mb-0 flex justify-center">
+                <div class="relative">
+                    <div class="w-64 h-64 bg-gradient-to-br from-teal-400 to-blue-500 rounded-full opacity-20 absolute -inset-1 blur-xl"></div>
+                    <img src="/img/IMG_5832.jpg" 
+                         alt="Developer" 
+                         class="w-64 h-64 rounded-full object-cover border-4 border-gray-700 relative">
+                </div>
+            </div>
+			
+			<div class="md:w-2/3 md:pl-12">
+			    <h2 class="text-3xl font-bold mb-6 text-white">
+			        <span class="gradient-text">Sobre Mim</span>
+			    </h2>
+				<p class="text-gray-300 mb-6">
+				    Sou um desenvolvedor Full Stack apaixonado, com 3 anos de experiência no desenvolvimento de aplicações robustas e escaláveis utilizando Spring Boot e tecnologias Java.  
+				    Minha trajetória começou pela curiosidade em entender como sistemas complexos funcionam, evoluindo para uma carreira que realmente me inspira.
+				</p>
+				<p class="text-gray-300 mb-6">
+				    Tenho expertise em desenvolvimento de APIs RESTful, integração com bancos de dados relacionais (MySQL, PostgreSQL) e não relacionais, além de conhecimentos sólidos em segurança, autenticação e arquitetura de microsserviços.  
+				    Também sou proficiente em design de software, testes automatizados e otimização de performance.
+				</p>
+				<p class="text-gray-300 mb-8">
+				    Quando não estou programando, gosto de contribuir para projetos open-source, explorar novas tecnologias do ecossistema Java e compartilhar conhecimento com a comunidade de desenvolvedores.
+				</p>
+
+			    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+			        <div class="bg-gray-800 bg-opacity-50 p-4 rounded-lg border border-gray-700">
+			            <div class="text-teal-400 text-2xl mb-2">
+			                <i class="fas fa-code"></i>
+			            </div>
+			            <h3 class="font-semibold text-white">3+ Anos</h3>
+			            <p class="text-gray-400 text-sm">de Experiência</p>
+			        </div>
+			        <div class="bg-gray-800 bg-opacity-50 p-4 rounded-lg border border-gray-700">
+			            <div class="text-blue-400 text-2xl mb-2">
+			                <i class="fas fa-project-diagram"></i>
+			            </div>
+			            <h3 class="font-semibold text-white">20+ Projetos</h3>
+			            <p class="text-gray-400 text-sm">Concluídos</p>
+			        </div>
+			        <div class="bg-gray-800 bg-opacity-50 p-4 rounded-lg border border-gray-700">
+			            <div class="text-purple-400 text-2xl mb-2">
+			                <i class="fas fa-users"></i>
+			            </div>
+			            <h3 class="font-semibold text-white">15+ Clientes</h3>
+			            <p class="text-gray-400 text-sm">Satisfeitos</p>
+			        </div>
+			    </div>
+			</div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+		<div class="text-center mb-16">
+		    <h2 class="text-3xl font-bold mb-4 text-white">
+		        <span class="gradient-text">Minhas Habilidades</span>
+		    </h2>
+		    <p class="text-gray-400 max-w-2xl mx-auto">
+		        Aqui estão as tecnologias com as quais já trabalhei e meu nível de proficiência em cada uma delas.
+		    </p>
+		</div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Left Column -->
+            <div>
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-white">HTML5 & CSS3</h3>
+                        <span class="text-sm text-teal-400">100%</span>
+                    </div>
+                    <div class="skill-bar rounded-full">
+                        <div class="skill-progress rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-white">JavaScript (ES6+)</h3>
+                        <span class="text-sm text-teal-400">95%</span>
+                    </div>
+                    <div class="skill-bar rounded-full">
+                        <div class="skill-progress rounded-full" style="width: 95%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-white">Spring Boot</h3>
+                        <span class="text-sm text-teal-400">90%</span>
+                    </div>
+                    <div class="skill-bar rounded-full">
+                        <div class="skill-progress rounded-full" style="width: 90%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-white">Java</h3>
+                        <span class="text-sm text-teal-400">90%</span>
+                    </div>
+                    <div class="skill-bar rounded-full">
+                        <div class="skill-progress rounded-full" style="width: 90%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div>
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-white">Banco de Dados</h3>
+                        <span class="text-sm text-teal-400">90%</span>
+                    </div>
+                    <div class="skill-bar rounded-full">
+                        <div class="skill-progress rounded-full" style="width: 90%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-white">Git & GitHub</h3>
+                        <span class="text-sm text-teal-400">100%</span>
+                    </div>
+                    <div class="skill-bar rounded-full">
+                        <div class="skill-progress rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-white">Tailwind CSS</h3>
+                        <span class="text-sm text-teal-400">90%</span>
+                    </div>
+                    <div class="skill-bar rounded-full">
+                        <div class="skill-progress rounded-full" style="width: 90%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-medium text-white">RESTful APIs</h3>
+                        <span class="text-sm text-teal-400">80%</span>
+                    </div>
+                    <div class="skill-bar rounded-full">
+                        <div class="skill-progress rounded-full" style="width: 80%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+		<!-- Ícones de Tecnologias -->
+		<div class="mt-16">
+		    <h3 class="text-xl font-semibold text-center text-white mb-8">Tecnologias com as quais trabalho</h3>
+		    <div class="flex flex-wrap justify-center gap-6">
+		        <div class="tech-icon" title="HTML5">
+		            <i class="fab fa-html5 text-4xl text-orange-500"></i>
+		        </div>
+		        <div class="tech-icon" title="CSS3">
+		            <i class="fab fa-css3-alt text-4xl text-blue-500"></i>
+		        </div>
+		        <div class="tech-icon" title="JavaScript">
+		            <i class="fab fa-js text-4xl text-yellow-400"></i>
+		        </div>
+		        <div class="tech-icon" title="Java">
+		            <i class="fab fa-java text-4xl text-blue-400"></i>
+		        </div>
+		        <div class="tech-icon" title="Node.js">
+		            <i class="fab fa-node-js text-4xl text-green-500"></i>
+		        </div>
+		        <div class="tech-icon" title="Git">
+		            <i class="fab fa-git-alt text-4xl text-orange-600"></i>
+		        </div>
+		        <div class="tech-icon" title="Spring Boot">
+		            <i class="fas fa-leaf text-4xl text-green-600"></i> <!-- Ícone alternativo para Spring Boot -->
+		        </div>
+		        <div class="tech-icon" title="NPM">
+		            <i class="fab fa-npm text-4xl text-red-500"></i>
+		        </div>
+		    </div>
+        </div>
+    </section>
+
+	<!-- Projects Section -->
+	<section id="projects" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gray-800 bg-opacity-50 rounded-xl backdrop-blur-sm my-10">
+	    <div class="text-center mb-16">
+	        <h2 class="text-3xl font-bold mb-4 text-white">
+	            <span class="gradient-text">Meus Projetos</span>
+	        </h2>
+	        <p class="text-gray-400 max-w-2xl mx-auto">
+	            Aqui estão alguns dos meus projetos recentes. Cada um foi cuidadosamente criado para resolver problemas específicos.
+	        </p>
+	    </div>
+	    
+	    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+	        <!-- Projeto 1 - Império Online -->
+	        <div class="project-card bg-gray-800 rounded-lg overflow-hidden border border-gray-700 transition duration-300">
+	            <div class="h-48 bg-gradient-to-br from-blue-900 to-gray-900 relative overflow-hidden">
+	                <img src="/img/Screenshot_1.png" 
+	                     alt="Império Online" 
+	                     class="w-full h-full object-cover opacity-70">
+	            </div>
+	            <div class="p-6">
+	                <h3 class="text-xl font-bold text-white mb-2">Império Online</h3>
+	                <p class="text-gray-400 mb-4">
+	                    Plataforma online para gerenciamento e controle completo de negócios digitais, focada em usabilidade e performance.
+	                </p>
+	                <div class="flex flex-wrap gap-2">
+	                    <span class="text-xs px-2 py-1 bg-gray-700 rounded-full text-green-300">Java Spring Boot</span>
+	                    <span class="text-xs px-2 py-1 bg-gray-700 rounded-full text-blue-300">JavaScript</span>
+	                    <span class="text-xs px-2 py-1 bg-gray-700 rounded-full text-gray-300">MySQL</span>
+	                </div>
+	            </div>
+	        </div>
+	        
+	        <!-- Projeto 2 - DescomplicaDoc -->
+	        <div class="project-card bg-gray-800 rounded-lg overflow-hidden border border-gray-700 transition duration-300">
+	            <div class="h-48 bg-gradient-to-br from-purple-900 to-gray-900 relative overflow-hidden">
+	                <img src="/img/Screenshot_2.png" 
+	                     alt="DescomplicaDoc" 
+	                     class="w-full h-full object-cover opacity-70">      
+	            </div>
+	            <div class="p-6">
+	                <h3 class="text-xl font-bold text-white mb-2">DescomplicaDoc</h3>
+	                <p class="text-gray-400 mb-4">
+	                    Plataforma SaaS para upload e análise de documentos PDF com inteligência artificial para simplificar conteúdos complexos.
+	                </p>
+	                <div class="flex flex-wrap gap-2">
+	                    <span class="text-xs px-2 py-1 bg-gray-700 rounded-full text-red-400">Spring Boot</span>
+	                    <span class="text-xs px-2 py-1 bg-gray-700 rounded-full text-blue-400">Java</span>
+	                    <span class="text-xs px-2 py-1 bg-gray-700 rounded-full text-gray-300">MySQL</span>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    
+	    <div class="text-center mt-12">
+	        <a href="https://github.com/PeterAbenza" class="inline-block px-6 py-3 border border-teal-400 text-teal-400 font-medium rounded-md hover:bg-teal-400 hover:bg-opacity-10 transition duration-300">
+	            Ver Todos os Projetos
+	        </a>
+	    </div>
+	</section>
+
+
+    <!-- Interactive Terminal -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
+            <div class="flex items-center px-4 py-2 bg-gray-800 border-b border-gray-700">
+                <div class="flex space-x-2 mr-4">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <div class="text-sm text-gray-400 code-text">
+                    dev-terminal ~/portfolio
+                </div>
+            </div>
+            <div id="terminal" class="p-4">
+                <p class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-command">whoami</span></p>
+                <p class="terminal-line terminal-response">Peter Abenza - Full Stack Web Developer</p>
+                <p class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-command">experience --years</span></p>
+                <p class="terminal-line terminal-response">3+ anos de experiência em desenvolvimento web.</p>
+                <p class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-command">skills --list</span></p>
+                <p class="terminal-line terminal-response">JavaScript, Spring Boot, Java, Node.js, Express, MySQL, MongoDB, HTML5, CSS3, Git</p>
+                <p class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-command">contact --options</span></p>
+                <p class="terminal-line terminal-response">email: abenzpeter@gmail.com | phone: (17) 99274-5765 | github: Peter Abenza</p>
+                <p class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-command typed-command"></span><span class="cursor">█</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gray-800 bg-opacity-50 rounded-xl backdrop-blur-sm my-10">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4 text-white">
+                <span class="gradient-text">Entre em contato</span>
+            </h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">
+				Tem um projeto em mente ou quer discutir possíveis oportunidades? Sinta-se à vontade para me chamar!
+            </p>
+        </div>
+        
+        <div class="flex flex-col lg:flex-row gap-12">
+            <div class="lg:w-1/2">
+                <form class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Seu Nome</label>
+                        <input type="text" id="name" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" placeholder="Nome">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                        <input type="email" id="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" placeholder="email@gmail.com">
+                    </div>
+                    <div>
+                        <label for="subject" class="block text-sm font-medium text-gray-300 mb-1">Assunto</label>
+                        <input type="text" id="subject" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" placeholder="Assunto">
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Mensagem</label>
+                        <textarea id="message" rows="5" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md text-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" placeholder="Fale-me sobre o seu projeto..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-teal-400 to-blue-500 text-white font-medium rounded-md hover:opacity-90 transition duration-300">
+                        Mandar Mensagem
+                    </button>
+                </form>
+            </div>
+            
+            <div class="lg:w-1/2">
+                <div class="bg-gray-800 bg-opacity-70 p-8 rounded-lg border border-gray-700 h-full">
+                    <h3 class="text-xl font-semibold text-white mb-6">Contatos de informação</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="text-teal-400 text-xl mr-4 mt-1">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-300">Email</h4>
+                                <p class="text-gray-400">abenzpeter@gmail.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="text-blue-400 text-xl mr-4 mt-1">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-300">Phone</h4>
+                                <p class="text-gray-400">(17) 99274-5765</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="text-purple-400 text-xl mr-4 mt-1">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-300">Location</h4>
+                                <p class="text-gray-400">São José do Rio Preto, SP</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10">
+                        <h4 class="font-medium text-gray-300 mb-4">Me Siga</h4>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com/PeterAbenza" class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-gray-300 hover:bg-teal-500 hover:text-white transition">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/peterabenza/" class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-gray-300 hover:bg-blue-500 hover:text-white transition">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://www.instagram.com/imperio.online__/" class="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-gray-300 hover:bg-pink-500 hover:text-white transition">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-4 sm:px-6 lg:px-8 bg-gray-900 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <span class="text-xl font-bold code-text gradient-text">Peter Abenza</span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-6 mb-6 md:mb-0">
+                    <a href="#home" class="text-gray-400 hover:text-white transition">Home</a>
+                    <a href="#about" class="text-gray-400 hover:text-white transition">About</a>
+                    <a href="#skills" class="text-gray-400 hover:text-white transition">Skills</a>
+                    <a href="#projects" class="text-gray-400 hover:text-white transition">Projects</a>
+                    <a href="#contact" class="text-gray-400 hover:text-white transition">Contact</a>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="https://github.com/PeterAbenza" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/peterabenza/" class="text-gray-400 hover:text-white transition">
+                        <i class="fab fa-linkedin-in text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+				<p>&copy; 2025 PeterAbenza. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Background animation
+        VANTA.NET({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x3d7aed,
+            backgroundColor: 0x111827,
+            points: 10.00,
+            maxDistance: 20.00,
+            spacing: 15.00
+        });
+
+        // Terminal typing effect
+        const commands = [
+            "npm start",
+            "git status",
+            "node server.js",
+            "cd projects",
+            "ls -la",
+            "contact --email"
+        ];
+        
+        let currentCommand = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let isPaused = false;
+        
+        function typeTerminalCommand() {
+            const typedCommandElement = document.querySelector('.typed-command');
+            const cursorElement = document.querySelector('.cursor');
+            
+            if (isPaused) {
+                setTimeout(typeTerminalCommand, 1000);
+                isPaused = false;
+                return;
+            }
+            
+            if (isDeleting) {
+                // Deleting characters
+                typedCommandElement.textContent = commands[currentCommand].substring(0, charIndex - 1);
+                charIndex--;
+                
+                if (charIndex === 0) {
+                    isDeleting = false;
+                    currentCommand = (currentCommand + 1) % commands.length;
+                    isPaused = true;
+                }
+            } else {
+                // Typing characters
+                typedCommandElement.textContent = commands[currentCommand].substring(0, charIndex + 1);
+                charIndex++;
+                
+                if (charIndex === commands[currentCommand].length) {
+                    isDeleting = true;
+                    isPaused = true;
+                }
+            }
+            
+            // Blink cursor effect
+            cursorElement.style.opacity = cursorElement.style.opacity === '0' ? '1' : '0';
+            
+            const typingSpeed = isDeleting ? 50 : 100;
+            setTimeout(typeTerminalCommand, typingSpeed);
+        }
+        
+        // Start the typing effect
+        setTimeout(typeTerminalCommand, 1000);
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menu if open
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
